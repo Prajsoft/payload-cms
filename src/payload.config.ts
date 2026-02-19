@@ -10,6 +10,14 @@ import { Media } from './collections/Media'
 import { Homepage } from './collections/Homepage'
 import { ProductContent } from './collections/ProductContent'
 import { ProductCategoryContent } from './collections/ProductCategoryContent'
+import {
+  AboutPage,
+  ContactPage,
+  FaqPage,
+  PrivacyPage,
+  ShippingReturnsPage,
+  TermsPage,
+} from './collections/TrustPages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +29,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Homepage, ProductContent, ProductCategoryContent],
+  collections: [
+    Users,
+    Media,
+    Homepage,
+    ProductContent,
+    ProductCategoryContent,
+    AboutPage,
+    ContactPage,
+    FaqPage,
+    ShippingReturnsPage,
+    PrivacyPage,
+    TermsPage,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
