@@ -84,7 +84,7 @@ jobs:
                 ];
                 for (const name of allMigrations) {
                   await c.query(
-                    'INSERT INTO payload_migrations (name,batch,updated_at,created_at) SELECT \$1,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name=\$1)',
+                    'INSERT INTO payload_migrations (name,batch,updated_at,created_at) SELECT \$1::text,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name=\$1::text)',
                     [name]
                   );
                 }
