@@ -1,4 +1,9 @@
 import type { CollectionConfig, Field } from 'payload'
+import {
+  DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
+  TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
+  RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
+} from '../blocks/BlogBlocks'
 
 const seoFields: Field[] = [
   {
@@ -66,8 +71,13 @@ export const BlogPost: CollectionConfig = {
       fields: [{ name: 'tag', type: 'text', required: true }],
     },
     {
-      name: 'content',
-      type: 'richText',
+      name: 'layout',
+      type: 'blocks',
+      blocks: [
+        DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
+        TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
+        RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
+      ],
     },
     ...seoFields,
   ],

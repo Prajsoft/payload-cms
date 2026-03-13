@@ -573,21 +573,7 @@ export interface BlogPost {
         id?: string | null;
       }[]
     | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  layout?: any[] | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -1101,7 +1087,7 @@ export interface BlogPostSelect<T extends boolean = true> {
   excerpt?: T;
   featuredImage?: T;
   tags?: T | { tag?: T; id?: T };
-  content?: T;
+  layout?: T;
   seo?:
     | T
     | {
