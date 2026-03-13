@@ -31,14 +31,14 @@ jobs:
               require('dotenv').config();
               const { Client } = require('pg');
               const c = new Client({ connectionString: process.env.DATABASE_URL });
-              c.connect().then(() => c.query(\`
-                INSERT INTO payload_migrations (name, batch, updated_at, created_at)
-                VALUES
-                  ('20260216_081521_init',  1, NOW(), NOW()),
-                  ('20260218_003924',       1, NOW(), NOW()),
-                  ('20260218_135222',       1, NOW(), NOW())
-                ON CONFLICT (name) DO NOTHING
-              \`)).then(() => c.end()).catch(e => { console.error(e.message); c.end(); });
+              const names = ['20260216_081521_init','20260218_003924','20260218_135222'];
+              c.connect()
+                .then(() => Promise.all(names.map(n => c.query(
+                  'INSERT INTO payload_migrations (name,batch,updated_at,created_at) SELECT \$1,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name=\$1)',
+                  [n]
+                ))))
+                .then(() => { console.log('Migration history seeded'); c.end(); })
+                .catch(e => { console.error(e.message); c.end(); });
             "
-            npm run payload migrate
+            printf '\n' | npm run payload migrate
             pm2 restart payload-cms --update-env
