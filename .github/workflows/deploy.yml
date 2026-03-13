@@ -95,5 +95,5 @@ jobs:
               }).catch(e => { console.error(e.message); c.end(); process.exit(1); });
             "
             npm run payload -- migrate:create blog_layout_blocks 2>&1 || true
-            printf '\n' | npm run payload migrate 2>&1 || true
+            yes | npm run payload migrate 2>&1 || true
             pm2 restart payload-cms --update-env
