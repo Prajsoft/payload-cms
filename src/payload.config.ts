@@ -19,6 +19,8 @@ import {
   ShippingReturnsPage,
   TermsPage,
 } from './collections/TrustPages'
+import { Blog } from './collections/Blog'
+import { BlogPost } from './collections/BlogPost'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -48,6 +50,8 @@ export default buildConfig({
     ShippingReturnsPage,
     PrivacyPage,
     TermsPage,
+    Blog,
+    BlogPost,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

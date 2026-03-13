@@ -78,6 +78,8 @@ export interface Config {
     'shipping-returns-page': ShippingReturnsPage;
     'privacy-page': PrivacyPage;
     'terms-page': TermsPage;
+    blog: Blog;
+    'blog-post': BlogPost;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +98,8 @@ export interface Config {
     'shipping-returns-page': ShippingReturnsPageSelect<false> | ShippingReturnsPageSelect<true>;
     'privacy-page': PrivacyPageSelect<false> | PrivacyPageSelect<true>;
     'terms-page': TermsPageSelect<false> | TermsPageSelect<true>;
+    blog: BlogSelect<false> | BlogSelect<true>;
+    'blog-post': BlogPostSelect<false> | BlogPostSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -523,6 +527,67 @@ export interface TermsPage {
         id?: string | null;
       }[]
     | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    canonicalUrl?: string | null;
+    noIndex?: boolean | null;
+    openGraph?: {
+      ogTitle?: string | null;
+      ogDescription?: string | null;
+      ogImage?: (number | null) | Media;
+    };
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog".
+ */
+export interface Blog {
+  id: number;
+  title: string;
+  slug: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-post".
+ */
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  blog: number | Blog;
+  visibility: 'published' | 'draft';
+  author?: string | null;
+  publishedAt?: string | null;
+  excerpt?: string | null;
+  featuredImage?: (number | null) | Media;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -1007,6 +1072,44 @@ export interface TermsPageSelect<T extends boolean = true> {
               ogDescription?: T;
               ogImage?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog_select".
+ */
+export interface BlogSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-post_select".
+ */
+export interface BlogPostSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  blog?: T;
+  visibility?: T;
+  author?: T;
+  publishedAt?: T;
+  excerpt?: T;
+  featuredImage?: T;
+  tags?: T | { tag?: T; id?: T };
+  content?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+        openGraph?: T | { ogTitle?: T; ogDescription?: T; ogImage?: T };
       };
   updatedAt?: T;
   createdAt?: T;
