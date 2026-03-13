@@ -27,5 +27,5 @@ jobs:
             git pull origin main
             npm ci
             npm run build
-            printf '\n' | npm run payload migrate
+            printf 'y\n' | npm run payload migrate
             pm2 restart payload-cms --update-env
