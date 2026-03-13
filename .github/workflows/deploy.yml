@@ -26,6 +26,7 @@ jobs:
             git stash push -u -m "gha-auto-stash-$(date +%Y%m%d%H%M%S)" || true
             git pull origin main
             npm ci
+            npm run generate:importmap
             rm -rf .next
             npm run build
             node -e "
