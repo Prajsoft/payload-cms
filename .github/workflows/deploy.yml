@@ -27,5 +27,18 @@ jobs:
             git pull origin main
             npm ci
             npm run build
-            printf 'y\n' | npm run payload migrate
+            node -e "
+              require('dotenv').config();
+              const { Client } = require('pg');
+              const c = new Client({ connectionString: process.env.DATABASE_URL });
+              c.connect().then(() => c.query(\`
+                INSERT INTO payload_migrations (name, batch, updated_at, created_at)
+                VALUES
+                  ('20260216_081521_init',  1, NOW(), NOW()),
+                  ('20260218_003924',       1, NOW(), NOW()),
+                  ('20260218_135222',       1, NOW(), NOW())
+                ON CONFLICT (name) DO NOTHING
+              \`)).then(() => c.end()).catch(e => { console.error(e.message); c.end(); });
+            "
+            npm run payload migrate
             pm2 restart payload-cms --update-env
