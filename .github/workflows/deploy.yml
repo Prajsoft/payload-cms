@@ -26,6 +26,7 @@ jobs:
             git stash push -u -m "gha-auto-stash-$(date +%Y%m%d%H%M%S)" || true
             git pull origin main
             npm ci
+            npm run repair:blog-block-tables
             npm run generate:importmap
             rm -rf .next
             npm run build
@@ -67,88 +68,105 @@ jobs:
 
                 // -- Block tables --
                 const blocks = [
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_direct_answer (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_direct_answer (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     question varchar NOT NULL, short_answer varchar NOT NULL, expanded_answer varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_definition (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_definition (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     term varchar NOT NULL, definition varchar NOT NULL)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_text (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_text (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar, content jsonb)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_image (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_image (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     image_id integer, alt varchar, caption varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_video (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_video (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     youtube_url varchar, caption varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_gallery (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_gallery (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_gallery_images (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_gallery_images (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, image_id integer, alt varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_tip (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_tip (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     title varchar, content varchar NOT NULL)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_warning (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_warning (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     title varchar, content varchar NOT NULL)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_comparison_table (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_comparison_table (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_comparison_table_rows (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_comparison_table_rows (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, feature varchar, option_a varchar, option_b varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_stats (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_stats (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_stats_items (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_stats_items (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, label varchar, value varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_pros_cons (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons_pros (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_pros_cons_pros (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, item varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons_cons (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_pros_cons_cons (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, item varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_related_posts (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_related_posts (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar, title varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_related_posts_posts (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_related_posts_posts (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, slug varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_product_recommendation (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_product_recommendation (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     product_handle varchar, title varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_faq (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_faq (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_faq_questions (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_faq_questions (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, question varchar, answer varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_summary (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_summary (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_summary_points (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_summary_points (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, point varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_cta (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_cta (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar,
                     title varchar, description varchar, button_text varchar, link varchar)\`,
-                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_divider (
+                  \`CREATE TABLE IF NOT EXISTS blog_post_blocks_divider (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
+                    _path varchar NOT NULL,
                     id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
                 ];
                 for (const sql of blocks) { await c.query(sql); }
