@@ -139,7 +139,7 @@ jobs:
                     id varchar PRIMARY KEY NOT NULL, block_name varchar, title varchar)\`,
                   \`CREATE TABLE IF NOT EXISTS blog_post_blocks_related_posts_posts (
                     _order integer NOT NULL, _parent_id varchar NOT NULL,
-                    id varchar PRIMARY KEY NOT NULL, slug varchar)\`,
+                    id varchar PRIMARY KEY NOT NULL, slug varchar, post_id integer)\`,
                   \`CREATE TABLE IF NOT EXISTS blog_post_blocks_product_recommendation (
                     _order integer NOT NULL, _parent_id integer NOT NULL,
                     _path varchar NOT NULL,
@@ -171,10 +171,14 @@ jobs:
                 ];
                 for (const sql of blocks) { await c.query(sql); }
 
+                // -- Add post_id to related_posts_posts (idempotent) --
+                await c.query('ALTER TABLE blog_post_blocks_related_posts_posts ADD COLUMN IF NOT EXISTS post_id integer');
+
                 // -- Seed migration history --
                 const allMigrations = [
                   '20260216_081521_init', '20260218_003924', '20260218_135222',
-                  '20260313_000000_add_blog', '20260315_000000_blog_blocks'
+                  '20260313_000000_add_blog', '20260315_000000_blog_blocks',
+                  '20260316_000000_related_posts_relationship'
                 ];
                 for (const name of allMigrations) {
                   await c.query(

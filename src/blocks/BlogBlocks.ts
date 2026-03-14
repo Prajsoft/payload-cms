@@ -128,7 +128,27 @@ export const RelatedPostsBlock: Block = {
       name: 'posts',
       type: 'array',
       fields: [
-        { name: 'slug', type: 'text' },
+        {
+          name: 'post',
+          type: 'relationship',
+          relationTo: 'blog-post',
+          admin: {
+            description: 'Select a related blog post for a correct storefront link.',
+          },
+        },
+        {
+          name: 'slug',
+          type: 'text',
+          admin: {
+            description: 'Legacy fallback. Use only when a related post record is not available.',
+            condition: (
+              _data: unknown,
+              siblingData: {
+                post?: unknown
+              } | undefined
+            ) => !siblingData?.post,
+          },
+        },
       ],
     },
   ],
