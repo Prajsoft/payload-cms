@@ -207,3 +207,52 @@ export const Divider: Block = {
   slug: 'divider',
   fields: [],
 }
+
+export const TableOfContents: Block = {
+  slug: 'tableOfContents',
+  fields: [
+    { name: 'title', type: 'text', defaultValue: 'In this article' },
+    { name: 'autoGenerate', type: 'checkbox', defaultValue: true },
+  ],
+}
+
+export const HowToSteps: Block = {
+  slug: 'howToSteps',
+  fields: [
+    { name: 'title', type: 'text' },
+    {
+      name: 'steps',
+      type: 'array',
+      fields: [
+        { name: 'stepTitle', type: 'text', required: true },
+        { name: 'description', type: 'textarea' },
+        { name: 'image', type: 'upload', relationTo: 'media' },
+      ],
+    },
+  ],
+}
+
+export const TableBlock: Block = {
+  slug: 'table',
+  fields: [
+    { name: 'caption', type: 'text' },
+    {
+      name: 'headers',
+      type: 'array',
+      fields: [
+        { name: 'label', type: 'text', required: true },
+      ],
+    },
+    {
+      name: 'rows',
+      type: 'array',
+      fields: [
+        {
+          name: 'cells',
+          type: 'text',
+          admin: { description: 'Comma-separated values, one per column header' },
+        },
+      ],
+    },
+  ],
+}

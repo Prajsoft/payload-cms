@@ -3,6 +3,7 @@ import {
   DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
   TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
   RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
+  TableOfContents, HowToSteps, TableBlock,
 } from '../blocks/BlogBlocks'
 
 const seoFields: Field[] = [
@@ -77,6 +78,7 @@ export const BlogPost: CollectionConfig = {
         DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
         TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
         RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
+        TableOfContents, HowToSteps, TableBlock,
       ],
     },
     ...seoFields,
