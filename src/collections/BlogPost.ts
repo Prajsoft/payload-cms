@@ -30,7 +30,14 @@ const seoFields: Field[] = [
 
 export const BlogPost: CollectionConfig = {
   slug: 'blog-post',
-  access: { read: () => true },
+  access: {
+    read: ({ req }) => {
+      // Admin users can read all posts (including drafts)
+      if (req.user) return true
+      // Public API only returns published posts
+      return { visibility: { equals: 'published' } }
+    },
+  },
   admin: { useAsTitle: 'title' },
   fields: [
     { name: 'title', type: 'text', required: true },

@@ -213,6 +213,22 @@ export const TableOfContents: Block = {
   fields: [
     { name: 'title', type: 'text', defaultValue: 'In this article' },
     { name: 'autoGenerate', type: 'checkbox', defaultValue: true },
+    {
+      name: 'items',
+      type: 'array',
+      admin: {
+        description: 'Manual items — only used when Auto Generate is off',
+        condition: (_, siblingData) => siblingData?.autoGenerate === false,
+      },
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        {
+          name: 'anchor',
+          type: 'text',
+          admin: { description: 'Heading ID to scroll to (without #), e.g. types-of-cricket-balls' },
+        },
+      ],
+    },
   ],
 }
 
@@ -250,7 +266,7 @@ export const TableBlock: Block = {
         {
           name: 'cells',
           type: 'text',
-          admin: { description: 'Comma-separated values, one per column header' },
+          admin: { description: 'Pipe-separated values, one per column header (e.g. Men\'s | 156g | Professional)' },
         },
       ],
     },
