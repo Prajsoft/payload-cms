@@ -24,7 +24,7 @@ export const Homepage: CollectionConfig = {
             await req.payload.update({
               collection: 'homepage',
               id: doc.id,
-              data: { isActive: false },
+              data: { isActive: false } as any,
               req,
             })
           }
