@@ -90,6 +90,9 @@ jobs:
                     [name]
                   );
                 }
+                // Add blog FK columns to locked documents rels (migration ran as seeded but never executed these ALTER TABLEs)
+                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_id integer');
+                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_post_id integer');
                 console.log('Blog tables ensured and migration history seeded');
                 await c.end();
               }).catch(e => { console.error(e.message); c.end(); process.exit(1); });
