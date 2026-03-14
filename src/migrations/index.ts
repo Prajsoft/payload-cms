@@ -6,6 +6,7 @@ import * as migration_20260315_000000_blog_blocks from './20260315_000000_blog_b
 import * as migration_20260316_000000_related_posts_relationship from './20260316_000000_related_posts_relationship';
 import * as migration_20260317_000000_new_blocks from './20260317_000000_new_blocks';
 import * as migration_20260318_000000_blog_fixes from './20260318_000000_blog_fixes';
+import * as migration_20260319_000000_homepage_active from './20260319_000000_homepage_active';
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20260318_000000_blog_fixes.up,
     down: migration_20260318_000000_blog_fixes.down,
     name: '20260318_000000_blog_fixes',
+  },
+  {
+    up: migration_20260319_000000_homepage_active.up,
+    down: migration_20260319_000000_homepage_active.down,
+    name: '20260319_000000_homepage_active',
   },
 ];

@@ -211,12 +211,18 @@ jobs:
                 await c.query('CREATE INDEX IF NOT EXISTS blog_post_blocks_table_rows_parent_idx ON blog_post_blocks_table_rows (_parent_id)');
                 await c.query('CREATE INDEX IF NOT EXISTS blog_post_blocks_table_of_contents_items_parent_idx ON blog_post_blocks_table_of_contents_items (_parent_id)');
 
+                // -- Homepage active switch --
+                await c.query('ALTER TABLE homepage ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT false');
+                await c.query('CREATE INDEX IF NOT EXISTS homepage_is_active_idx ON homepage (is_active)');
+                await c.query(\`UPDATE homepage SET is_active = true WHERE id = (SELECT id FROM homepage ORDER BY updated_at DESC LIMIT 1) AND NOT EXISTS (SELECT 1 FROM homepage WHERE is_active = true)\`);
+
                 // -- Seed migration history --
                 const allMigrations = [
                   '20260216_081521_init', '20260218_003924', '20260218_135222',
                   '20260313_000000_add_blog', '20260315_000000_blog_blocks',
                   '20260316_000000_related_posts_relationship',
-                  '20260317_000000_new_blocks', '20260318_000000_blog_fixes'
+                  '20260317_000000_new_blocks', '20260318_000000_blog_fixes',
+                  '20260319_000000_homepage_active'
                 ];
                 for (const name of allMigrations) {
                   await c.query(

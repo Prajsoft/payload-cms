@@ -7,6 +7,31 @@ export const Homepage: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    description: 'Create one homepage per variant (Default, Diwali, Holi…). Tick "Active" on the one you want live — the others are automatically deactivated.',
+  },
+  hooks: {
+    beforeChange: [
+      async ({ data, req }) => {
+        // When activating a homepage, deactivate all others first
+        if (data.isActive) {
+          const existing = await req.payload.find({
+            collection: 'homepage',
+            where: { isActive: { equals: true } },
+            limit: 100,
+            depth: 0,
+          })
+          for (const doc of existing.docs) {
+            await req.payload.update({
+              collection: 'homepage',
+              id: doc.id,
+              data: { isActive: false },
+              req,
+            })
+          }
+        }
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -14,6 +39,16 @@ export const Homepage: CollectionConfig = {
       type: 'text',
       required: true,
       defaultValue: 'Homepage',
+      admin: { description: 'Label for this variant, e.g. "Default", "Diwali 2026"' },
+    },
+    {
+      name: 'isActive',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Tick to make this the live homepage. Only one can be active at a time.',
+        position: 'sidebar',
+      },
     },
     {
       name: 'announcementBar',
