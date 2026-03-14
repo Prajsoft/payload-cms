@@ -34,55 +34,129 @@ jobs:
               const { Client } = require('pg');
               const c = new Client({ connectionString: process.env.DATABASE_URL });
               c.connect().then(async () => {
-                await c.query(\`
-                  CREATE TABLE IF NOT EXISTS blog (
-                    id serial PRIMARY KEY,
-                    title varchar NOT NULL,
-                    slug varchar NOT NULL,
-                    description varchar,
-                    updated_at timestamptz DEFAULT now() NOT NULL,
-                    created_at timestamptz DEFAULT now() NOT NULL
-                  )
-                \`);
+
+                // -- Core blog tables --
+                await c.query(\`CREATE TABLE IF NOT EXISTS blog (
+                  id serial PRIMARY KEY, title varchar NOT NULL, slug varchar NOT NULL,
+                  description varchar, updated_at timestamptz DEFAULT now() NOT NULL,
+                  created_at timestamptz DEFAULT now() NOT NULL)\`);
                 await c.query('CREATE UNIQUE INDEX IF NOT EXISTS blog_slug_idx ON blog (slug)');
-                await c.query(\`
-                  CREATE TABLE IF NOT EXISTS blog_post (
-                    id serial PRIMARY KEY,
-                    title varchar NOT NULL,
-                    slug varchar NOT NULL,
-                    blog_id integer,
-                    visibility varchar DEFAULT 'draft' NOT NULL,
-                    author varchar,
-                    published_at timestamptz,
-                    excerpt varchar,
-                    featured_image_id integer,
-                    content jsonb,
-                    seo_meta_title varchar,
-                    seo_meta_description varchar,
-                    seo_canonical_url varchar,
-                    seo_no_index boolean DEFAULT false,
-                    seo_open_graph_og_title varchar,
-                    seo_open_graph_og_description varchar,
-                    seo_open_graph_og_image_id integer,
-                    updated_at timestamptz DEFAULT now() NOT NULL,
-                    created_at timestamptz DEFAULT now() NOT NULL
-                  )
-                \`);
+
+                await c.query(\`CREATE TABLE IF NOT EXISTS blog_post (
+                  id serial PRIMARY KEY, title varchar NOT NULL, slug varchar NOT NULL,
+                  blog_id integer, visibility varchar DEFAULT 'draft' NOT NULL,
+                  author varchar, published_at timestamptz, excerpt varchar,
+                  featured_image_id integer,
+                  seo_meta_title varchar, seo_meta_description varchar,
+                  seo_canonical_url varchar, seo_no_index boolean DEFAULT false,
+                  seo_open_graph_og_title varchar, seo_open_graph_og_description varchar,
+                  seo_open_graph_og_image_id integer,
+                  updated_at timestamptz DEFAULT now() NOT NULL,
+                  created_at timestamptz DEFAULT now() NOT NULL)\`);
+                await c.query('ALTER TABLE blog_post DROP COLUMN IF EXISTS content');
                 await c.query('CREATE INDEX IF NOT EXISTS blog_post_slug_idx ON blog_post (slug)');
                 await c.query('CREATE INDEX IF NOT EXISTS blog_post_blog_idx ON blog_post (blog_id)');
-                await c.query(\`
-                  CREATE TABLE IF NOT EXISTS blog_post_tags (
-                    _order integer NOT NULL,
-                    _parent_id integer NOT NULL,
-                    id varchar PRIMARY KEY,
-                    tag varchar NOT NULL
-                  )
-                \`);
+
+                await c.query(\`CREATE TABLE IF NOT EXISTS blog_post_tags (
+                  _order integer NOT NULL, _parent_id integer NOT NULL,
+                  id varchar PRIMARY KEY, tag varchar NOT NULL)\`);
+
+                // -- Locked docs FK columns --
+                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_id integer');
+                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_post_id integer');
+
+                // -- Block tables --
+                const blocks = [
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_direct_answer (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    question varchar NOT NULL, short_answer varchar NOT NULL, expanded_answer varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_definition (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    term varchar NOT NULL, definition varchar NOT NULL)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_text (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar, content jsonb)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_image (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    image_id integer, alt varchar, caption varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_video (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    youtube_url varchar, caption varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_gallery (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_gallery_images (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, image_id integer, alt varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_tip (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    title varchar, content varchar NOT NULL)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_warning (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    title varchar, content varchar NOT NULL)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_comparison_table (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_comparison_table_rows (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, feature varchar, option_a varchar, option_b varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_stats (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_stats_items (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, label varchar, value varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons_pros (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, item varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_pros_cons_cons (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, item varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_related_posts (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar, title varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_related_posts_posts (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, slug varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_product_recommendation (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    product_handle varchar, title varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_faq (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_faq_questions (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, question varchar, answer varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_summary (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_summary_points (
+                    _order integer NOT NULL, _parent_id varchar NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, point varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_cta (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar,
+                    title varchar, description varchar, button_text varchar, link varchar)\`,
+                  \`CREATE TABLE IF NOT EXISTS blog_post_layout_divider (
+                    _order integer NOT NULL, _parent_id integer NOT NULL,
+                    id varchar PRIMARY KEY NOT NULL, block_name varchar)\`,
+                ];
+                for (const sql of blocks) { await c.query(sql); }
+
+                // -- Seed migration history --
                 const allMigrations = [
-                  '20260216_081521_init',
-                  '20260218_003924',
-                  '20260218_135222',
-                  '20260313_000000_add_blog'
+                  '20260216_081521_init', '20260218_003924', '20260218_135222',
+                  '20260313_000000_add_blog', '20260315_000000_blog_blocks'
                 ];
                 for (const name of allMigrations) {
                   await c.query(
@@ -90,12 +164,9 @@ jobs:
                     [name]
                   );
                 }
-                // Add blog FK columns to locked documents rels (migration ran as seeded but never executed these ALTER TABLEs)
-                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_id integer');
-                await c.query('ALTER TABLE payload_locked_documents_rels ADD COLUMN IF NOT EXISTS blog_post_id integer');
-                console.log('Blog tables ensured and migration history seeded');
+
+                console.log('All blog + block tables ensured, migrations seeded');
                 await c.end();
               }).catch(e => { console.error(e.message); c.end(); process.exit(1); });
             "
-            yes | npm run payload migrate 2>&1 || true
             pm2 restart payload-cms --update-env
