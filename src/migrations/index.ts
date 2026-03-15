@@ -7,6 +7,7 @@ import * as migration_20260316_000000_related_posts_relationship from './2026031
 import * as migration_20260317_000000_new_blocks from './20260317_000000_new_blocks';
 import * as migration_20260318_000000_blog_fixes from './20260318_000000_blog_fixes';
 import * as migration_20260319_000000_homepage_active from './20260319_000000_homepage_active';
+import * as migration_20260320_000000_hero_image_block from './20260320_000000_hero_image_block';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260319_000000_homepage_active.up,
     down: migration_20260319_000000_homepage_active.down,
     name: '20260319_000000_homepage_active',
+  },
+  {
+    up: migration_20260320_000000_hero_image_block.up,
+    down: migration_20260320_000000_hero_image_block.down,
+    name: '20260320_000000_hero_image_block',
   },
 ];

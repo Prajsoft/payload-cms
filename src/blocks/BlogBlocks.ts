@@ -208,6 +208,91 @@ export const Divider: Block = {
   fields: [],
 }
 
+export const HeroImageBlock: Block = {
+  slug: 'heroImage',
+  labels: { singular: 'Hero Image', plural: 'Hero Images' },
+  fields: [
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
+    {
+      name: 'alt',
+      type: 'text',
+      admin: { description: 'Alt text for screen readers and SEO. Defaults to image filename if blank.' },
+    },
+    {
+      name: 'caption',
+      type: 'text',
+      admin: { description: 'Optional caption shown below the image.' },
+    },
+    {
+      name: 'height',
+      type: 'select',
+      defaultValue: 'md',
+      options: [
+        { label: 'Small (300px)', value: 'sm' },
+        { label: 'Medium (480px)', value: 'md' },
+        { label: 'Large (640px)', value: 'lg' },
+        { label: 'Full viewport height', value: 'full' },
+      ],
+      admin: { description: 'Controls the rendered height of the hero image.' },
+    },
+    {
+      name: 'objectPosition',
+      type: 'select',
+      defaultValue: 'center',
+      options: [
+        { label: 'Top', value: 'top' },
+        { label: 'Center', value: 'center' },
+        { label: 'Bottom', value: 'bottom' },
+      ],
+      admin: { description: 'Focal point when the image is cropped to fit.' },
+    },
+    {
+      name: 'overlay',
+      type: 'group',
+      admin: { description: 'Optional dark overlay with text on top of the image.' },
+      fields: [
+        {
+          name: 'enabled',
+          type: 'checkbox',
+          defaultValue: false,
+        },
+        {
+          name: 'opacity',
+          type: 'number',
+          defaultValue: 40,
+          min: 0,
+          max: 100,
+          admin: {
+            description: 'Overlay darkness 0–100 (40 = 40% black).',
+            condition: (_, siblingData) => !!siblingData?.enabled,
+          },
+        },
+        {
+          name: 'headline',
+          type: 'text',
+          admin: {
+            description: 'Large text centred over the image.',
+            condition: (_, siblingData) => !!siblingData?.enabled,
+          },
+        },
+        {
+          name: 'subheadline',
+          type: 'text',
+          admin: {
+            description: 'Smaller text beneath the headline.',
+            condition: (_, siblingData) => !!siblingData?.enabled,
+          },
+        },
+      ],
+    },
+  ],
+}
+
 export const TableOfContents: Block = {
   slug: 'tableOfContents',
   fields: [

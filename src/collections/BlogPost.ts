@@ -3,7 +3,7 @@ import {
   DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
   TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
   RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
-  TableOfContents, HowToSteps, TableBlock,
+  TableOfContents, HowToSteps, TableBlock, HeroImageBlock,
 } from '../blocks/BlogBlocks'
 
 const seoFields: Field[] = [
@@ -82,6 +82,7 @@ export const BlogPost: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       blocks: [
+        HeroImageBlock,
         DirectAnswer, Definition, TextBlock, ImageBlock, VideoBlock, GalleryBlock,
         TipBlock, WarningBlock, ComparisonTable, StatsBlock, ProsConsBlock,
         RelatedPostsBlock, ProductRecommendation, FAQBlock, SummaryBlock, CTA, Divider,
