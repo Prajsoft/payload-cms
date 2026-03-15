@@ -132,13 +132,17 @@ test.describe('Blog CMS: publishing workflow', () => {
     )
 
     // 2. Change the visibility select from "draft" to "published"
-    //    Payload renders select fields with an id of #field-<fieldName>
-    const visibilitySelect = page.locator('#field-visibility')
-    await expect(visibilitySelect).toBeVisible({ timeout: 10_000 })
-    await visibilitySelect.selectOption('published')
+    //    Payload 3 renders select fields using react-select (not a native <select>).
+    //    #field-visibility is the inputId of the react-select inner input.
+    //    Clicking it opens the dropdown; then we click the desired option.
+    const visibilityInput = page.locator('#field-visibility')
+    await expect(visibilityInput).toBeVisible({ timeout: 10_000 })
+    await visibilityInput.click()
+    await page.locator('.rs__option').filter({ hasText: /^published$/i }).click()
 
-    // 3. Save the document — Payload uses a "Save" button in the toolbar
-    const saveBtn = page.locator('button', { hasText: /^save$/i }).first()
+    // 3. Save the document — Payload uses a "Save" button in the toolbar.
+    //    Use a contains-match in case button text includes icon text.
+    const saveBtn = page.locator('button').filter({ hasText: /\bsave\b/i }).first()
     await expect(saveBtn).toBeVisible()
     await saveBtn.click()
 
@@ -172,12 +176,13 @@ test.describe('Blog CMS: publishing workflow', () => {
     )
 
     // 2. Change visibility back to draft
-    const visibilitySelect = page.locator('#field-visibility')
-    await expect(visibilitySelect).toBeVisible({ timeout: 10_000 })
-    await visibilitySelect.selectOption('draft')
+    const visibilityInput = page.locator('#field-visibility')
+    await expect(visibilityInput).toBeVisible({ timeout: 10_000 })
+    await visibilityInput.click()
+    await page.locator('.rs__option').filter({ hasText: /^draft$/i }).click()
 
     // 3. Save
-    const saveBtn = page.locator('button', { hasText: /^save$/i }).first()
+    const saveBtn = page.locator('button').filter({ hasText: /\bsave\b/i }).first()
     await saveBtn.click()
 
     await page.waitForURL(new RegExp(`/admin/collections/blog-post/${postId}`), {
