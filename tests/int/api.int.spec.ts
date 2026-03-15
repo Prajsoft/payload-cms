@@ -23,7 +23,7 @@ describe('API', () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
-  })
+  }, 30000)
 
   afterAll(cleanupAll)
 

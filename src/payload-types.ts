@@ -181,12 +181,21 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Create one homepage per variant (Default, Diwali, Holi…). Tick "Active" on the one you want live — the others are automatically deactivated.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage".
  */
 export interface Homepage {
   id: number;
+  /**
+   * Label for this variant, e.g. "Default", "Diwali 2026"
+   */
   title: string;
+  /**
+   * Tick to make this the live homepage. Only one can be active at a time.
+   */
+  isActive?: boolean | null;
   announcementBar?: {
     enabled?: boolean | null;
     message?: string | null;
@@ -548,6 +557,9 @@ export interface TermsPage {
 export interface Blog {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier, e.g. cricket-tips
+   */
   slug: string;
   description?: string | null;
   updatedAt: string;
@@ -560,6 +572,9 @@ export interface Blog {
 export interface BlogPost {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier, e.g. how-to-grip-a-cricket-bat
+   */
   slug: string;
   blog: number | Blog;
   visibility: 'published' | 'draft';
@@ -573,7 +588,249 @@ export interface BlogPost {
         id?: string | null;
       }[]
     | null;
-  layout?: any[] | null;
+  layout?:
+    | (
+        | {
+            question: string;
+            shortAnswer: string;
+            expandedAnswer?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'directAnswer';
+          }
+        | {
+            term: string;
+            definition: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'definition';
+          }
+        | {
+            content?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            image?: (number | null) | Media;
+            alt?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'image';
+          }
+        | {
+            youtubeUrl?: string | null;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'video';
+          }
+        | {
+            images?:
+              | {
+                  image?: (number | null) | Media;
+                  alt?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            title?: string | null;
+            content: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'tip';
+          }
+        | {
+            title?: string | null;
+            content: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'warning';
+          }
+        | {
+            rows?:
+              | {
+                  feature?: string | null;
+                  optionA?: string | null;
+                  optionB?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+        | {
+            items?:
+              | {
+                  label?: string | null;
+                  value?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'stats';
+          }
+        | {
+            pros?:
+              | {
+                  item?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            cons?:
+              | {
+                  item?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'prosCons';
+          }
+        | {
+            title?: string | null;
+            posts?:
+              | {
+                  /**
+                   * Select a related blog post for a correct storefront link.
+                   */
+                  post?: (number | null) | BlogPost;
+                  /**
+                   * Legacy fallback. Use only when a related post record is not available.
+                   */
+                  slug?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'relatedPosts';
+          }
+        | {
+            /**
+             * Medusa product handle
+             */
+            productHandle?: string | null;
+            title?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'productRecommendation';
+          }
+        | {
+            questions?:
+              | {
+                  question?: string | null;
+                  answer?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
+          }
+        | {
+            points?:
+              | {
+                  point?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'summary';
+          }
+        | {
+            title?: string | null;
+            description?: string | null;
+            buttonText?: string | null;
+            link?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'cta';
+          }
+        | {
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'divider';
+          }
+        | {
+            title?: string | null;
+            autoGenerate?: boolean | null;
+            /**
+             * Manual items — only used when Auto Generate is off
+             */
+            items?:
+              | {
+                  label: string;
+                  /**
+                   * Heading ID to scroll to (without #), e.g. types-of-cricket-balls
+                   */
+                  anchor?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'tableOfContents';
+          }
+        | {
+            title?: string | null;
+            steps?:
+              | {
+                  stepTitle: string;
+                  description?: string | null;
+                  image?: (number | null) | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'howToSteps';
+          }
+        | {
+            caption?: string | null;
+            headers?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            rows?:
+              | {
+                  /**
+                   * Pipe-separated values, one per column header (e.g. Men's | 156g | Professional)
+                   */
+                  cells?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'table';
+          }
+      )[]
+    | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -655,6 +912,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'terms-page';
         value: number | TermsPage;
+      } | null)
+    | ({
+        relationTo: 'blog';
+        value: number | Blog;
+      } | null)
+    | ({
+        relationTo: 'blog-post';
+        value: number | BlogPost;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -744,6 +1009,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface HomepageSelect<T extends boolean = true> {
   title?: T;
+  isActive?: T;
   announcementBar?:
     | T
     | {
@@ -1086,8 +1352,243 @@ export interface BlogPostSelect<T extends boolean = true> {
   publishedAt?: T;
   excerpt?: T;
   featuredImage?: T;
-  tags?: T | { tag?: T; id?: T };
-  layout?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  layout?:
+    | T
+    | {
+        directAnswer?:
+          | T
+          | {
+              question?: T;
+              shortAnswer?: T;
+              expandedAnswer?: T;
+              id?: T;
+              blockName?: T;
+            };
+        definition?:
+          | T
+          | {
+              term?: T;
+              definition?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        image?:
+          | T
+          | {
+              image?: T;
+              alt?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
+        video?:
+          | T
+          | {
+              youtubeUrl?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              images?:
+                | T
+                | {
+                    image?: T;
+                    alt?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        tip?:
+          | T
+          | {
+              title?: T;
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        warning?:
+          | T
+          | {
+              title?: T;
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              rows?:
+                | T
+                | {
+                    feature?: T;
+                    optionA?: T;
+                    optionB?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        stats?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        prosCons?:
+          | T
+          | {
+              pros?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              cons?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        relatedPosts?:
+          | T
+          | {
+              title?: T;
+              posts?:
+                | T
+                | {
+                    post?: T;
+                    slug?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        productRecommendation?:
+          | T
+          | {
+              productHandle?: T;
+              title?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              questions?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        summary?:
+          | T
+          | {
+              points?:
+                | T
+                | {
+                    point?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              buttonText?: T;
+              link?: T;
+              id?: T;
+              blockName?: T;
+            };
+        divider?:
+          | T
+          | {
+              id?: T;
+              blockName?: T;
+            };
+        tableOfContents?:
+          | T
+          | {
+              title?: T;
+              autoGenerate?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    anchor?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        howToSteps?:
+          | T
+          | {
+              title?: T;
+              steps?:
+                | T
+                | {
+                    stepTitle?: T;
+                    description?: T;
+                    image?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        table?:
+          | T
+          | {
+              caption?: T;
+              headers?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    cells?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
   seo?:
     | T
     | {
@@ -1095,7 +1596,13 @@ export interface BlogPostSelect<T extends boolean = true> {
         metaDescription?: T;
         canonicalUrl?: T;
         noIndex?: T;
-        openGraph?: T | { ogTitle?: T; ogDescription?: T; ogImage?: T };
+        openGraph?:
+          | T
+          | {
+              ogTitle?: T;
+              ogDescription?: T;
+              ogImage?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
