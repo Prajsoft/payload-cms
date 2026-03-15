@@ -206,10 +206,15 @@ export interface Homepage {
   };
   heroTitle: string;
   heroSubtitle?: string | null;
-  heroImages: {
-    image: number | Media;
-    id?: string | null;
-  }[];
+  /**
+   * Add at least one image for active homepages.
+   */
+  heroImages?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
   heroPrimaryCtaText: string;
   heroPrimaryCtaLink: string;
   heroSecondaryCtaText?: string | null;

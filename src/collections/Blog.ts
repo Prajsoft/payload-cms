@@ -15,5 +15,14 @@ export const Blog: CollectionConfig = {
       admin: { description: 'URL-friendly identifier, e.g. cricket-tips' },
     },
     { name: 'description', type: 'textarea' },
+    {
+      name: 'backgroundSvg',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload an SVG file to use as the repeating background pattern for this blog. Leave empty to use the default cricket pattern.',
+      },
+    },
   ],
 }
