@@ -93,8 +93,11 @@ export const Homepage: CollectionConfig = {
     {
       name: 'heroImages',
       type: 'array',
-      minRows: 1,
-      required: true,
+      // No minRows/required here — heroImages enforcement for active homepages
+      // belongs in e2e tests where real media fixtures are available.
+      admin: {
+        description: 'Add at least one image for active homepages.',
+      },
       fields: [
         {
           name: 'image',

@@ -69,7 +69,13 @@ describe('API', () => {
       created.push({ collection: 'blog-post', id: draftPostId })
 
       expect(draft.visibility).toBe('draft')
-      expect(draft.blog).toBe(blogId)
+      // Payload may return the blog as a populated object or as a raw id depending
+      // on collection depth — normalise before asserting.
+      const blogRef =
+        typeof draft.blog === 'object' && draft.blog !== null
+          ? (draft.blog as { id: string | number }).id
+          : draft.blog
+      expect(blogRef).toBe(blogId)
     })
 
     it('admin query (overrideAccess: true) sees draft post', async () => {
