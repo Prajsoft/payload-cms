@@ -80,6 +80,8 @@ export default buildConfig({
               secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
             },
           },
+          generateFileURL: ({ filename }) =>
+            `${process.env.R2_PUBLIC_URL}/${filename}`,
         }),
       ]
     : [],
